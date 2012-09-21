@@ -351,7 +351,7 @@ class DropboxClient(object):
 
         return self.rest_client.PUT(url, file_obj, headers)
 
-    def get_file(self, from_path, rev=None):
+    def get_file(self, from_path, rev=None, range=None):
         """Download a file.
 
         Unlike most other calls, get_file returns a raw HTTPResponse with the connection open.
@@ -371,6 +371,7 @@ class DropboxClient(object):
         Args:
             - ``from_path``: The path to the file to be downloaded.
             - ``rev``: A previous rev value of the file to be downloaded. [optional]
+            - ``range``: A pair of (startbyte,endbyte) used to request a partial response
 
         Returns:
             - An httplib.HTTPResponse that is the result of the request.
@@ -388,6 +389,9 @@ class DropboxClient(object):
             params['rev'] = rev
 
         url, params, headers = self.request(path, params, method='GET', content_server=True)
+
+        if range:
+            headers['Range'] = 'bytes=%d-%d' % range
         return self.rest_client.request("GET", url, headers=headers, raw_response=True)
 
     def get_file_and_metadata(self, from_path, rev=None):

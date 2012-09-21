@@ -179,7 +179,7 @@ class RESTClientObject(object):
             raise RESTSocketError(host, "SSL certificate error: " + e)
 
         r = conn.getresponse()
-        if r.status != 200:
+        if r.status not in [200, 206]:
             raise ErrorResponse(r)
 
         if raw_response:
